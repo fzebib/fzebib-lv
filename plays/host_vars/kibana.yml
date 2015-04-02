@@ -1,0 +1,27 @@
+## Fluentd server
+# Address of elasticsearch used by fluentd
+es_fqdn: localhost
+es_port: 9200
+# If this machine should forward to Elasticsearch
+forward_to_es: True
+# Curator tool
+install_curator: True
+curator_max_keep_days: 90
+# Head plugin
+install_head: True
+# ElasticHQ plugin
+install_eshq: False
+# Marvel plugin
+install_marvel: True
+
+## Kibana
+# URL address to reach kibana
+dns_url_kibana: localhost
+# Folder to store Kibana
+kibana_path: /usr/share/nginx/www/kibana
+# Kibana version from GitHub tag
+kibana_tag_version: v3.1.0
+
+## Elasticsearch
+# Elasticsearch version from debian repository
+es_version: 1.5

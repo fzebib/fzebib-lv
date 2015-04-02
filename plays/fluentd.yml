@@ -1,0 +1,28 @@
+# All machines
+- name: fluent-d
+  hosts: client-d
+  sudo: true
+  roles:
+    - fluentd
+  vars_files:
+    - "group_vars/fluentd_client.yml"
+
+# Log
+- name: log servers
+  hosts: logservers
+  sudo: true
+  roles:
+    - elasticsearch
+    - role: nginx
+    - kibana
+    - fluentd
+  vars_files:
+    - "host_vars/kibana.yml"
+  tasks:
+   - name: Link to Current Kibana Dir
+     file: src=/usr/share/nginx/www/kibana/kibana-4.0.1-linux-x64 dest=/usr/share/nginx/www/kibanalive state=link force=yes
+     
+   - name: Nginx Conf Update
+     template: src=templates/nginx.j2 dest=/etc/nginx/sites-enabled/nginx.conf owner=root group=root mode=0644
+     notify:
+       - reload nginx 

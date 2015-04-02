@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  company:
+  min_ansible_version: 1.4
+  platforms:
+   - name: Debian
+     versions:
+      - wheezy
+  categories:
+   - web
+   - system
+   - database
+   - database:nosql
+   - database:sql
+dependencies: []

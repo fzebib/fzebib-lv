@@ -1,0 +1,50 @@
+---
+
+# Fluentd server
+
+# set sysctl
+- name: sysctl tuning
+  sysctl: name={{ item.name }} value="{{ item.value }}" state=present
+  tags: fluentd
+  with_items:
+    - { name: net.ipv4.tcp_tw_recycle, value: 1 }
+    - { name: net.ipv4.tcp_tw_reuse, value: 1 }
+    - { name: net.ipv4.ip_local_port_range, value: '10240 65535' }
+
+# set limits.conf
+- name: limits.conf tuning
+  lineinfile: dest=/etc/security/limits.conf line="{{ item }}"
+  tags: fluentd
+  with_items:
+    - 'root soft nofile 65536'
+    - 'root hard nofile 65536'
+    - '* soft nofile 65536'
+    - '* hard nofile 65536'
+
+# install apt key
+- apt_key: url=http://packages.treasuredata.com/GPG-KEY-td-agent state=present
+
+# set dedicated repository
+- apt_repository: repo='deb http://packages.treasuredata.com/2/debian/wheezy/ wheezy contrib' state=present
+
+# install fluentd with dependancies
+- name: install fluentd
+  apt: name={{ item }} state=present force=yes
+  tags: fluentd
+  with_items:
+    - openntpd
+    - rsyslog
+    - td-agent
+
+# fluentd configuration
+- file: path=/etc/td-agent/config.d state=directory
+- copy: src=td-agent.conf dest=/etc/td-agent/td-agent.conf owner=root group=root mode=644
+  notify: restart fluentd
+
+# Install server plugins
+- include: server.yml
+  when: forward_to_es is defined and forward_to_es
+
+# Install client plugins
+- include: client.yml
+  when: fluentd_server_fqdn is defined

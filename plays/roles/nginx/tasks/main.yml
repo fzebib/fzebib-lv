@@ -1,0 +1,10 @@
+---
+
+# install Nginx
+- apt: pkg=nginx state=present
+
+# config files
+- include: config.yml
+
+# start Nginx
+- service: name=nginx state=started

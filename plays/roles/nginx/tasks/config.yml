@@ -1,0 +1,26 @@
+---
+
+# nginx configuration
+- name: write nginx.conf
+  template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf backup=yes
+  notify: reload nginx
+
+# ensure default vhost is off
+- name: default virtualhost removed
+  file: dest=/etc/nginx/sites-enabled/default state=absent
+  notify:
+    - reload nginx
+
+# virtualhost configuration
+#- name:  nginx vhost config
+#  template: src=virtualhost.j2 dest=/etc/nginx/sites-available/{{ item['server']['server_name'] }} backup=yes
+  #with_items: nginx_sites
+  #when: nginx_sites|lower != 'none'
+
+# enable vhost
+#- name: nginx enable vhost
+ # file: src=/etc/nginx/sites-available/{{ item['server']['server_name'] }} dest=/etc/nginx/sites-enabled/{{ item['server']['server_name'] }} state=link
+ # with_items: nginx_sites
+  #when: nginx_sites|lower != 'none'
+  #notify:
+   # - reload nginx
